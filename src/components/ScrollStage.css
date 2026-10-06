@@ -1,0 +1,707 @@
+/* ===========================================================================
+   The pinned frame-sequence stage.
+
+   Geometry taken off the reference screenshot (994px wide render standing in
+   for a 1440 viewport, scale 1.449):
+     headline cap height 52px -> 75px actual -> ~107px type -> 7.4vw
+     two baselines 72px apart -> 104px -> line-height 0.97
+     CTA box 307x55 -> 445x80
+     slide counter baseline at 91.9% of the viewport height
+   ======================================================================== */
+
+.stage {
+  position: relative;
+  background: var(--ground);
+}
+
+.stage__pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.stage__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* sampled darkest pixel of the footage: no white flash before frame one */
+  background: var(--ground);
+}
+
+/* overall progress through the 10s clip */
+.stage__progress {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: var(--ivory-08);
+  z-index: 6;
+}
+
+.stage__progress span {
+  display: block;
+  height: 100%;
+  background: var(--ivory-55);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* --- chapters ------------------------------------------------------------- */
+
+.chapter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding-inline: var(--gutter);
+  opacity: 0;
+  will-change: opacity, transform;
+  z-index: 2;
+}
+
+/* each chapter gets its own scrim, tuned to where the watch sits in that
+   2.5s stretch of footage - a shared gradient would either wash out the
+   product or leave the type unreadable */
+.chapter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.chapter__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter__title {
+  font-size: calc(clamp(2rem, 4.6vw, 4.25rem) * var(--scale));
+  line-height: 1;
+  letter-spacing: -0.005em;
+  margin-block: 1.1rem 1.5rem;
+}
+
+.chapter__title span {
+  display: block;
+}
+
+.chapter__body {
+  max-width: 34ch;
+  font-size: calc(clamp(0.9rem, 1.05vw, 1.0625rem) * var(--ui-scale));
+  line-height: 1.75;
+  color: var(--ivory-80);
+}
+
+/* ---------------------------------------------------------------- 01 hero -- */
+/* Watch sits right of centre for the whole first 2.5s, so the whole column
+   lives in the dark left third: eyebrow, display line, lede, two spec rows and
+   the actions all share one left edge at the page gutter.
+
+   The display line comes down from 7.4vw to 6.2vw to buy vertical room for the
+   rows underneath - at 7.4vw the column overflowed a 900px viewport. */
+.chapter--hero::before {
+  background:
+    linear-gradient(
+      100deg,
+      rgba(2, 6, 14, 0.95) 0%,
+      rgba(2, 6, 14, 0.82) 34%,
+      rgba(2, 6, 14, 0.3) 62%,
+      rgba(2, 6, 14, 0) 84%
+    ),
+    linear-gradient(to top, rgba(2, 6, 14, 0.62) 0%, rgba(2, 6, 14, 0) 26%);
+}
+
+.chapter--hero {
+  align-items: center;
+}
+
+.chapter--hero .chapter__inner {
+  padding-top: 4vh;
+  align-items: flex-start;
+  max-width: min(var(--maxw), 100%);
+}
+
+/* --- eyebrow: rule, glyph, label ----------------------------------------- */
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: calc(0.625rem * var(--ui-scale));
+  font-weight: 400;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--ivory-80);
+}
+
+.hero__eyebrow-rule {
+  width: clamp(1.5rem, 3vw, 2.75rem);
+  height: 1px;
+  background: var(--ivory-38);
+}
+
+.hero__eyebrow-glyph {
+  width: calc(0.9375rem * var(--ui-scale));
+  height: calc(0.9375rem * var(--ui-scale));
+  color: var(--ivory-55);
+}
+
+/* --- display ------------------------------------------------------------- */
+
+.hero__title {
+  margin-top: clamp(1rem, 2.4vh, 1.75rem);
+  font-size: calc(clamp(2.5rem, 6.2vw, 6.5rem) * var(--scale));
+  line-height: 0.95;
+  /* Bodoni is already tight at display size - a touch of negative tracking
+     keeps the two lines reading as one block */
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+}
+
+.hero__title span {
+  display: block;
+}
+
+.hero__lede {
+  margin-top: clamp(1.1rem, 2.4vh, 1.65rem);
+  max-width: 38ch;
+  font-size: calc(clamp(0.875rem, 1.02vw, 1rem) * var(--ui-scale));
+  line-height: 1.75;
+  color: var(--ivory-55);
+}
+
+/* --- spec rows ----------------------------------------------------------- */
+
+.hero__features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
+  width: min(100%, 34rem);
+  margin: clamp(1.5rem, 3.4vh, 2.5rem) 0 0;
+  padding: clamp(1.25rem, 2.6vh, 1.75rem) 0 0;
+  border-top: 1px solid var(--ivory-14);
+  list-style: none;
+}
+
+.hero__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.hero__feature-icon {
+  width: calc(1.25rem * var(--ui-scale));
+  height: calc(1.25rem * var(--ui-scale));
+  flex: none;
+  margin-top: 0.1rem;
+  color: var(--ivory-80);
+}
+
+.hero__features h2 {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.hero__features p {
+  margin-top: 0.5rem;
+  font-size: calc(0.75rem * var(--ui-scale));
+  line-height: 1.65;
+  color: var(--ivory-38);
+}
+
+/* --- actions ------------------------------------------------------------- */
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+  margin-top: clamp(1.5rem, 3.4vh, 2.5rem);
+}
+
+.hero__cta {
+  min-width: min(100%, calc(20rem * var(--ui-scale)));
+}
+
+.hero__film {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-55);
+  transition: color 0.4s var(--ease);
+}
+
+.hero__film:hover {
+  color: var(--ivory);
+}
+
+.hero__film-icon {
+  width: calc(1.5rem * var(--ui-scale));
+  height: calc(1.5rem * var(--ui-scale));
+  transition: transform 0.4s var(--ease);
+}
+
+.hero__film:hover .hero__film-icon {
+  transform: scale(1.1);
+}
+
+/* --- scroll cue, bottom-right -------------------------------------------- */
+
+.hero__cue {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 8.1vh;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ivory-38);
+}
+
+.hero__cue i {
+  display: block;
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(to right, var(--ivory-38), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__cue i::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 40%;
+  background: var(--ivory);
+  animation: cue-slide 2.6s var(--ease-io) infinite;
+}
+
+@keyframes cue-slide {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(250%);
+    opacity: 0;
+  }
+}
+
+/* The column is tall now. On short viewports shed the optional rows from the
+   bottom up rather than letting it collide with the 01-04 rail. */
+@media (max-height: 820px) and (min-width: 721px) {
+  .hero__lede {
+    display: none;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 721px) {
+  .hero__features {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------- 02 construction -- */
+/* screws are flying off around the centre here, so hold the type low-left */
+.chapter--seal::before {
+  background:
+    linear-gradient(
+      95deg,
+      rgba(2, 6, 14, 0.9) 0%,
+      rgba(2, 6, 14, 0.6) 28%,
+      rgba(2, 6, 14, 0.1) 55%,
+      rgba(2, 6, 14, 0) 75%
+    ),
+    linear-gradient(to top, rgba(2, 6, 14, 0.72) 0%, rgba(2, 6, 14, 0) 42%);
+}
+
+.chapter--seal {
+  align-items: flex-end;
+}
+
+.chapter--seal .chapter__inner {
+  align-items: flex-start;
+  padding-bottom: 16vh;
+}
+
+.spec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.spec-chips li {
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--ivory-14);
+  border-radius: 999px;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-80);
+  backdrop-filter: blur(6px);
+}
+
+/* --------------------------------------------------------- 03 architecture -- */
+/* the exploded stack reads left-to-right across the frame, so the type moves
+   to the right edge to sit in the darker corner */
+.chapter--layers::before {
+  background:
+    linear-gradient(
+      260deg,
+      rgba(2, 6, 14, 0.92) 0%,
+      rgba(2, 6, 14, 0.7) 26%,
+      rgba(2, 6, 14, 0.12) 56%,
+      rgba(2, 6, 14, 0) 78%
+    ),
+    linear-gradient(to top, rgba(2, 6, 14, 0.5) 0%, rgba(2, 6, 14, 0) 30%);
+}
+
+.chapter--layers {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chapter--layers .chapter__inner {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.chapter--layers .chapter__title span {
+  display: block;
+}
+
+.layer-list {
+  width: min(100%, 24rem);
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ivory-14);
+}
+
+.layer-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0 1rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--ivory-08);
+  text-align: right;
+}
+
+.layer-list__no {
+  grid-row: span 2;
+  font-family: var(--serif);
+  font-size: calc(0.75rem * var(--ui-scale));
+  color: var(--ivory-38);
+  order: 2;
+}
+
+.layer-list__name {
+  font-size: calc(0.9375rem * var(--ui-scale));
+  letter-spacing: 0.04em;
+  color: var(--ivory);
+}
+
+.layer-list__meta {
+  grid-column: 1;
+  font-size: calc(0.6875rem * var(--ui-scale));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory-38);
+}
+
+/* ------------------------------------------------------------ 04 calibre -- */
+/* full exploded view fills the frame diagonally; only the bottom band stays
+   dark enough to carry type, so this chapter becomes a footer-style band */
+.chapter--calibre::before {
+  background: linear-gradient(
+    to top,
+    rgba(2, 6, 14, 0.94) 0%,
+    rgba(2, 6, 14, 0.82) 22%,
+    rgba(2, 6, 14, 0.3) 46%,
+    rgba(2, 6, 14, 0) 68%
+  );
+}
+
+.chapter--calibre {
+  align-items: flex-end;
+}
+
+.chapter--calibre .chapter__inner {
+  padding-bottom: 15vh;
+  gap: 2.25rem;
+}
+
+.calibre__head .chapter__title {
+  margin-bottom: 0;
+}
+
+.calibre__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin: 0;
+  background: var(--ivory-08);
+  border: 1px solid var(--ivory-08);
+}
+
+.calibre__stat {
+  padding: 1.4rem 1.5rem 1.25rem;
+  background: rgba(4, 7, 14, 0.45);
+  backdrop-filter: blur(10px);
+}
+
+.calibre__stat dt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1em;
+  font-family: var(--serif);
+  font-size: calc(clamp(1.5rem, 2.6vw, 2.5rem) * var(--scale));
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory);
+}
+
+.calibre__stat dt em {
+  font-style: normal;
+  font-size: 0.45em;
+  color: var(--ivory-55);
+}
+
+.calibre__stat dd {
+  margin: 0.7rem 0 0;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-55);
+}
+
+/* --- HUD ------------------------------------------------------------------ */
+
+/* the reference's "01 —— 03" slide counter, promoted to drive all four
+   chapters: baseline at 91.9% of the viewport, aligned to the page gutter */
+.rail {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 8.1vh;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: calc(0.6875rem * var(--ui-scale));
+  letter-spacing: 0.22em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory-55);
+  z-index: 5;
+}
+
+.rail__index {
+  color: var(--ivory);
+}
+
+.rail__track {
+  position: relative;
+  display: block;
+  width: clamp(5rem, 16vw, 15rem);
+  height: 1px;
+  background: var(--ivory-14);
+}
+
+.rail__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ivory);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* timecode readout - a watch site should show you the movement of the clip */
+.readout {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 8.1vh;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory-38);
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+
+/* the hero owns the bottom-right corner with its scroll cue, so the readout
+   only appears from chapter 02 onward */
+.stage:not([data-chapter='1']) .readout {
+  opacity: 1;
+}
+
+.stage:not([data-chapter='1']) .hero__cue {
+  opacity: 0;
+}
+
+.hero__cue {
+  transition: opacity 0.5s var(--ease);
+}
+
+.readout__time {
+  color: var(--ivory-80);
+}
+
+.readout__sep {
+  width: 1.5rem;
+  height: 1px;
+  background: var(--ivory-14);
+}
+
+/* --- responsive ----------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .calibre__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chapter--layers {
+    justify-content: flex-start;
+  }
+
+  .chapter--layers .chapter__inner {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .chapter--layers .layer-list li {
+    text-align: left;
+    grid-template-columns: 1fr auto;
+  }
+
+  .chapter--layers .layer-list__no {
+    order: 0;
+    grid-column: 2;
+  }
+
+  .chapter--layers::before {
+    background:
+      linear-gradient(
+        95deg,
+        rgba(2, 6, 14, 0.92) 0%,
+        rgba(2, 6, 14, 0.66) 34%,
+        rgba(2, 6, 14, 0.1) 70%
+      ),
+      linear-gradient(to top, rgba(2, 6, 14, 0.7) 0%, rgba(2, 6, 14, 0) 40%);
+  }
+}
+
+@media (max-width: 720px) {
+  .hero__title {
+    /* two long words cannot hold one line on a phone - let them wrap */
+    text-wrap: wrap;
+    font-size: calc(clamp(2.5rem, 13vw, 4.5rem) * var(--scale));
+  }
+
+  .chapter--hero .chapter__inner,
+  .chapter--seal .chapter__inner,
+  .chapter--calibre .chapter__inner {
+    padding-bottom: 22vh;
+  }
+
+  .chapter--hero {
+    align-items: flex-end;
+  }
+
+  .chapter--hero .chapter__inner {
+    padding-top: 0;
+  }
+
+  .chapter--hero::before {
+    background: linear-gradient(
+      to top,
+      rgba(2, 6, 14, 0.94) 0%,
+      rgba(2, 6, 14, 0.78) 34%,
+      rgba(2, 6, 14, 0.2) 64%,
+      rgba(2, 6, 14, 0) 88%
+    );
+  }
+
+  .hero__cta {
+    min-width: 100%;
+  }
+
+  /* the phone column can carry the eyebrow, display and one action - the lede
+     and the two spec rows would push the block past the fold */
+  .hero__lede,
+  .hero__features {
+    display: none;
+  }
+
+  .hero__actions {
+    width: 100%;
+    gap: 1.25rem;
+  }
+
+  .hero__eyebrow {
+    letter-spacing: 0.28em;
+  }
+
+  .hero__cue,
+  .readout {
+    display: none;
+  }
+
+  .chapter--layers {
+    align-items: flex-end;
+  }
+
+  .chapter--layers .chapter__inner {
+    padding-bottom: 20vh;
+  }
+
+  .layer-list li {
+    padding: 0.75rem 0;
+  }
+
+  .calibre__stat {
+    padding: 1rem 1.1rem;
+  }
+
+  .rail {
+    bottom: 6vh;
+  }
+}
+
+/* frame scrubbing is scroll-coupled, so it stays - it is the content, and the
+   user drives it. The unprompted motion is what goes. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue i::after {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .chapter {
+    transform: none !important;
+  }
+}

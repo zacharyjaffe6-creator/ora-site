@@ -1,0 +1,154 @@
+/* The one light section. Everything inside flips to paper ink - the dark
+   tokens would be invisible here, so this block overrides them locally. */
+
+.collection {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.92fr 1fr;
+  align-items: stretch;
+  background: var(--paper);
+  color: var(--paper-ink);
+  /* the reference curves the paper into the dark section above it */
+  border-start-start-radius: clamp(2rem, 10vw, 11rem);
+  overflow: hidden;
+}
+
+.collection__media {
+  position: relative;
+  min-height: clamp(24rem, 62vh, 44rem);
+  background: var(--ground);
+}
+
+.collection__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* the paper panel bulges left into the photo as a half-ellipse, which is what
+   makes the reference's edge read as a curve rather than a crop */
+.collection__media::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  right: -1px;
+  width: 24%;
+  background: var(--paper);
+  border-radius: 100% 0 0 100% / 50% 0 0 50%;
+}
+
+.collection__body {
+  display: flex;
+  align-items: center;
+  padding: clamp(3rem, 8vh, 6rem) var(--gutter) clamp(3rem, 8vh, 6rem)
+    clamp(1rem, 2vw, 2rem);
+}
+
+.collection__inner {
+  width: min(100%, 36rem);
+}
+
+.collection__title {
+  font-size: calc(clamp(1.75rem, 3vw, 2.75rem) * var(--scale));
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.collection__note {
+  margin: 1.75rem 0 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid rgba(18, 21, 27, 0.35);
+}
+
+.collection__note p {
+  font-family: var(--serif);
+  font-size: calc(clamp(0.9375rem, 1.1vw, 1.0625rem) * var(--ui-scale));
+  line-height: 1.75;
+  color: rgba(18, 21, 27, 0.78);
+}
+
+.collection__cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  margin-top: clamp(2rem, 4vh, 2.75rem);
+}
+
+.collection__cards figure {
+  margin: 0;
+}
+
+.collection__cards img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--ground);
+  transition: transform 0.9s var(--ease);
+}
+
+.collection__cards figure:hover img {
+  transform: translateY(-4px);
+}
+
+.collection__cards figcaption {
+  margin-top: 0.75rem;
+  font-size: calc(0.5625rem * var(--ui-scale));
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(18, 21, 27, 0.55);
+}
+
+/* the shared ghost button is built for the dark ground - re-ink it for paper */
+.collection__cta {
+  --btn-line: rgba(18, 21, 27, 0.3);
+  margin-top: clamp(2rem, 4vh, 2.75rem);
+  color: var(--paper-ink);
+}
+
+.collection__cta::before {
+  background: var(--paper-ink);
+}
+
+.collection__cta:hover {
+  border-color: var(--paper-ink);
+  color: var(--paper);
+}
+
+@media (max-width: 900px) {
+  .collection {
+    grid-template-columns: 1fr;
+    border-start-start-radius: clamp(1.5rem, 8vw, 4rem);
+    border-start-end-radius: clamp(1.5rem, 8vw, 4rem);
+  }
+
+  .collection__media {
+    min-height: clamp(18rem, 44vh, 26rem);
+  }
+
+  /* the curve moves to the bottom edge once the columns stack */
+  .collection__media::after {
+    top: auto;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    width: auto;
+    height: 18%;
+    border-radius: 0 0 100% 100% / 0 0 50% 50%;
+  }
+
+  .collection__body {
+    padding: clamp(2rem, 5vh, 3rem) var(--gutter) clamp(3rem, 7vh, 4.5rem);
+  }
+
+  .collection__inner {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .collection__cta {
+    min-width: 100%;
+  }
+}

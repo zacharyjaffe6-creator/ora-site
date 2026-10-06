@@ -1,0 +1,56 @@
+.marquee {
+  overflow: hidden;
+  background: var(--ink-000);
+  border-bottom: 1px solid var(--ivory-08);
+  padding-block: 1.35rem;
+  /* fade the ends so the loop never reads as a hard cut */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-run 48s linear infinite;
+}
+
+.marquee__run {
+  display: flex;
+  flex: none;
+}
+
+.marquee__word {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-right: clamp(1.5rem, 3vw, 3rem);
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ivory-38);
+}
+
+.marquee__word i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ivory-14);
+}
+
+@keyframes marquee-run {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}

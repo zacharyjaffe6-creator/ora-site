@@ -1,0 +1,342 @@
+/* Reference: "FEATURED TIMEPIECES" serif left, "VIEW ALL →" right, then a row
+   of hairline-bordered product cards - plate, brand, model, reference, price,
+   and an availability / arrow footer.
+
+   Here the row is a pinned rail: vertical scroll through the section drives it
+   right-to-left, with the watermark and the cards moving at different rates so
+   it reads as depth rather than one sliding plane. */
+
+.featured {
+  position: relative;
+  background: var(--ink-000);
+}
+
+/* left edge of the centred shell, so the rail starts flush with the title */
+.featured__pin {
+  --edge: max(var(--gutter), (100vw - var(--maxw)) / 2 + var(--gutter));
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vh, 2.75rem);
+  overflow: hidden;
+  padding-block: clamp(4rem, 9vh, 6rem) clamp(2rem, 5vh, 3.5rem);
+}
+
+/* oversized watermark drifting behind the rail at a third of its speed */
+.featured__wash {
+  position: absolute;
+  top: 50%;
+  left: 4vw;
+  translate: 0 -50%;
+  font-family: var(--serif);
+  font-size: 26vw;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(242, 239, 233, 0.022);
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.featured__head {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.featured__title {
+  font-size: calc(clamp(1.5rem, 2.6vw, 2.35rem) * var(--scale));
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.featured__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: calc(0.625rem * var(--ui-scale));
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-55);
+  white-space: nowrap;
+  transition: color 0.35s var(--ease);
+}
+
+.featured__all:hover {
+  color: var(--ivory);
+}
+
+.featured__all-arrow {
+  width: 2rem;
+  transition: transform 0.4s var(--ease);
+}
+
+.featured__all:hover .featured__all-arrow {
+  transform: translateX(4px);
+}
+
+/* --- the rail ------------------------------------------------------------- */
+
+.featured__viewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.featured__track {
+  display: flex;
+  gap: clamp(0.75rem, 1.4vw, 1.35rem);
+  margin: 0;
+  padding: 0.75rem var(--edge);
+  list-style: none;
+  width: max-content;
+  will-change: transform;
+}
+
+.featured__progress {
+  height: 1px;
+  background: var(--ivory-08);
+}
+
+.featured__progress span {
+  display: block;
+  height: 100%;
+  background: var(--ivory-55);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* --- product card --------------------------------------------------------- */
+
+.p-card {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: clamp(14.5rem, 21vw, 19.5rem);
+  padding: clamp(0.85rem, 1.1vw, 1.15rem);
+  border: 1px solid var(--ivory-08);
+  border-radius: 10px;
+  background: linear-gradient(
+    to bottom,
+    rgba(242, 239, 233, 0.035),
+    rgba(242, 239, 233, 0.012)
+  );
+  transition: border-color 0.5s var(--ease), background-color 0.5s var(--ease);
+  will-change: transform;
+}
+
+.p-card:hover {
+  border-color: var(--ivory-14);
+}
+
+.p-card__plate {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 6px;
+  /* matches the corner pixel of the supplied plates (rgb 14,16,20), so any
+     sub-pixel gap at the edges is invisible */
+  background: #0e1014;
+}
+
+/* the art is already 4:5 with its own ground baked in, so it fills the plate
+   edge to edge - no padding, nothing to letterbox */
+.p-card__plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease);
+}
+
+.p-card:hover .p-card__plate img {
+  transform: scale(1.06);
+}
+
+.p-card__index {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  font-family: var(--serif);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--ivory-38);
+  /* sits over the artwork now rather than a flat plate */
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+.p-card__body {
+  padding-top: clamp(1rem, 1.6vh, 1.4rem);
+}
+
+/* measured: 11px caps at ~0.14em tracking */
+.p-card__brand {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: calc(0.6875rem * var(--ui-scale));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.p-card__model {
+  margin-top: 0.55rem;
+  font-size: calc(0.8125rem * var(--ui-scale));
+  color: var(--ivory-55);
+}
+
+.p-card__ref {
+  margin-top: 0.15rem;
+  font-size: calc(0.75rem * var(--ui-scale));
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory-38);
+  overflow-wrap: anywhere;
+}
+
+.p-card__price {
+  margin-top: clamp(0.85rem, 1.4vh, 1.25rem);
+  font-family: var(--serif);
+  font-size: calc(1.125rem * var(--ui-scale));
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory);
+}
+
+.p-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: clamp(1rem, 1.8vh, 1.5rem);
+}
+
+.p-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: calc(0.5625rem * var(--ui-scale));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-55);
+}
+
+.p-card__status i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.p-card__status.is-ok i {
+  background: #5fd39a;
+  box-shadow: 0 0 8px rgba(95, 211, 154, 0.6);
+}
+
+.p-card__status.is-warn i {
+  background: #d8a24a;
+  box-shadow: 0 0 8px rgba(216, 162, 74, 0.5);
+}
+
+.p-card__status.is-mute i {
+  background: var(--ivory-38);
+}
+
+.p-card__go {
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: none;
+  border: 1px solid var(--ivory-14);
+  border-radius: 50%;
+  color: var(--ivory-55);
+  transition: border-color 0.4s var(--ease), color 0.4s var(--ease),
+    background-color 0.4s var(--ease);
+}
+
+.p-card__go-arrow {
+  width: 1.1rem;
+}
+
+.p-card:hover .p-card__go {
+  border-color: var(--ivory);
+  background: var(--ivory);
+  color: var(--ink-000);
+}
+
+/* --- static fallback ------------------------------------------------------ */
+/* Narrow screens and reduced-motion get a plain swipeable row: the pin is
+   released, the section collapses to its natural height, and the rail scrolls
+   under the user's own finger. */
+@media (max-width: 900px) {
+  .featured {
+    height: auto !important;
+  }
+
+  .featured__pin {
+    position: static;
+    height: auto;
+    padding-block: clamp(3.5rem, 8vh, 5rem) clamp(2rem, 5vh, 3rem);
+  }
+
+  .featured__wash {
+    display: none;
+  }
+
+  .featured__viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* let the rail bleed past the gutter the way a real carousel does */
+    margin-inline: calc(var(--edge) * -1);
+    padding-inline: 0;
+  }
+
+  .featured__viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .featured__track {
+    transform: none !important;
+  }
+
+  .p-card {
+    width: min(74vw, 17rem);
+    scroll-snap-align: center;
+  }
+
+  .featured__progress {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured[data-static] {
+    height: auto !important;
+  }
+
+  .featured[data-static] .featured__pin {
+    position: static;
+    height: auto;
+  }
+
+  .featured[data-static] .featured__viewport {
+    overflow-x: auto;
+  }
+
+  .featured[data-static] .featured__track,
+  .featured[data-static] .featured__wash,
+  .featured[data-static] .p-card {
+    transform: none !important;
+  }
+}

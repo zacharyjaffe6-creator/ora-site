@@ -1,0 +1,243 @@
+/* ===========================================================================
+   ORA SWISS — global tokens + reset
+   Palette sampled directly from the source footage:
+     deepest ground rgb(0,10,26) · field rgb(21,39,61) · dial rgb(27,50,80)
+   Layout metrics measured off the reference screenshot (994px wide ≈ 1440
+   viewport, scale factor 1.449).
+   ======================================================================== */
+
+:root {
+  /* ground — near-black with the footage's blue cast so page chrome and
+     frames meet without a seam */
+  --ink-000: #04070e;
+  --ink-050: #070b14;
+  --ink-100: #0b1220;
+  --ink-200: #101a2c;
+  --ground: #000a1a; /* darkest pixel in the footage; canvas fallback */
+
+  /* the footage's own blues */
+  --field: #15273d;
+  --dial: #1b3250;
+  --lume: #6ea3e0; /* bezel highlight, used sparingly */
+
+  /* type — warm ivory, not pure white (matches the reference headline) */
+  --ivory: #f2efe9;
+  --ivory-80: rgba(242, 239, 233, 0.8);
+  --ivory-55: rgba(242, 239, 233, 0.55);
+  --ivory-38: rgba(242, 239, 233, 0.38);
+  --ivory-14: rgba(242, 239, 233, 0.14);
+  --ivory-08: rgba(242, 239, 233, 0.08);
+
+  --paper: #f4f2ee; /* the light "New Collection" panel */
+  --paper-ink: #12151b;
+
+  --serif: 'Bodoni Moda', 'Didot', 'Playfair Display', Georgia, serif;
+  --sans: 'Jost', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* gutter: reference hamburger sits 84px in at 1440 → 5.85vw, clamped */
+  --gutter: clamp(1.25rem, 5.85vw, 5.25rem);
+  --maxw: 88rem;
+
+  /* one knob for display type, one for UI text — never share a multiplier,
+     shrinking 12px labels by 20% makes them unreadable */
+  --scale: 1;
+  --ui-scale: 1;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ink-000);
+  color: var(--ivory);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* the page is a long scroll — never let a stray child widen it */
+#root {
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+img,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 1px solid var(--lume);
+  outline-offset: 4px;
+}
+
+/* --- shared primitives ---------------------------------------------------- */
+
+/* small caps label: reference uses ~12px at 0.22em tracking throughout */
+.eyebrow {
+  font-family: var(--sans);
+  font-size: calc(0.688rem * var(--ui-scale));
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ivory-55);
+}
+
+/* ghost CTA — measured from the reference: 445×80 at 1440, 12px/0.22em text */
+.ghost-btn {
+  --btn-line: var(--ivory-38);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  min-width: min(100%, calc(24rem * var(--ui-scale)));
+  padding: calc(1.5rem * var(--ui-scale)) calc(2.25rem * var(--ui-scale));
+  border: 1px solid var(--btn-line);
+  font-size: calc(0.75rem * var(--ui-scale));
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease), color 0.5s var(--ease);
+}
+
+/* fill wipes in from the left on hover */
+.ghost-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ivory);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+  z-index: -1;
+}
+
+.ghost-btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ghost-btn:hover {
+  border-color: var(--ivory);
+  color: var(--ink-000);
+}
+
+.ghost-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.ghost-btn__arrow {
+  width: 2.5rem;
+  flex: none;
+}
+
+/* solid counterpart to the ghost button - a light block against the footage,
+   for the one action on screen that should read as primary */
+.solid-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: calc(1.15rem * var(--ui-scale)) calc(1.6rem * var(--ui-scale));
+  background: var(--ivory);
+  color: var(--ink-000);
+  font-size: calc(0.6875rem * var(--ui-scale));
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  border: 1px solid var(--ivory);
+  transition: background-color 0.45s var(--ease), color 0.45s var(--ease);
+}
+
+.solid-btn:hover {
+  background: transparent;
+  color: var(--ivory);
+}
+
+.solid-btn__arrow {
+  width: 2.25rem;
+  flex: none;
+  transition: transform 0.45s var(--ease);
+}
+
+.solid-btn:hover .solid-btn__arrow {
+  transform: translateX(4px);
+}
+
+/* hairline rule used between sections */
+.hairline {
+  height: 1px;
+  background: var(--ivory-08);
+  border: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- reduced motion ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

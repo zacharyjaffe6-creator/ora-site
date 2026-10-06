@@ -1,0 +1,53 @@
+/* Reference: four centred columns between hairlines - thin-line icon, a caps
+   label, then two short lines of muted copy. Generous vertical air. */
+
+.assurances {
+  background: var(--ink-000);
+  border-block: 1px solid var(--ivory-08);
+}
+
+.assurances__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin: 0;
+  padding-block: clamp(3rem, 8vh, 5.5rem);
+  list-style: none;
+}
+
+.assurances__row li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.assurances__icon {
+  width: calc(2rem * var(--ui-scale));
+  height: calc(2rem * var(--ui-scale));
+  color: var(--ivory-80);
+  margin-bottom: 1.35rem;
+}
+
+.assurances__label {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: calc(0.6875rem * var(--ui-scale));
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.assurances__copy {
+  margin-top: 0.85rem;
+  font-size: calc(0.8125rem * var(--ui-scale));
+  line-height: 1.7;
+  color: var(--ivory-55);
+}
+
+@media (max-width: 720px) {
+  .assurances__row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem 1.25rem;
+  }
+}
