@@ -48,13 +48,23 @@ export function useSmoothScroll(enabled = true) {
     const onWheel = (e) => {
       if (e.ctrlKey || e.defaultPrevented || locked()) return
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
-      e.preventDefault()
 
       // idle: pick up wherever anchors, keys or the scrollbar left the page
       if (!raf) {
         current = window.scrollY
         target = current
       }
+
+      // already at the top or bottom: leave the wheel alone, so that when the
+      // site is embedded in an iframe the page around it scrolls on instead of
+      // the visitor being stuck inside the frame
+      if (
+        (e.deltaY < 0 && target <= 0) ||
+        (e.deltaY > 0 && target >= maxScroll() - 1)
+      ) {
+        return
+      }
+      e.preventDefault()
       const unit =
         e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1
       target = Math.min(maxScroll(), Math.max(0, target + e.deltaY * unit))
